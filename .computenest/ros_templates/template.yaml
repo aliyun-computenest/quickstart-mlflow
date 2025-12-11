@@ -329,6 +329,7 @@ Resources:
                 mount -a
             }
             init_and_mount_data_disk
+
   RunInstallCommand:
     Type: ALIYUN::ECS::RunCommand
     Properties:
@@ -450,7 +451,7 @@ Resources:
                 cp -rn $docker_compose_parent_dir/* /data
                 # sed替换挂载目录路径为数据盘目录
                 cp $docker_compose_parent_dir/docker-compose.yaml $docker_compose_parent_dir/docker-compose.yaml.bak
-                sed -i 's|\./|/data/|g' $docker_compose_parent_dir/docker-compose.yaml
+                sed -i 's|\pgdata|/data/|g' $docker_compose_parent_dir/docker-compose.yaml
                 chmod -R 777 /data
             }
 
@@ -466,33 +467,7 @@ Resources:
               Ref: ALIYUN::Region
             CurTime:
               Ref: CurTime
-Outputs: 
-  postgres_address:
-    Description:
-      en: postgres address.
-      zh-cn: postgres 访问页面。
-    Value:
-      Fn::Sub:
-        - http://${ServerAddress}:5432
-        - ServerAddress:
-            Fn::Select:
-              - 0
-              - Fn::GetAtt:
-                  - InstanceGroup
-                  - PublicIps
-  minio_address:
-    Description:
-      en: minio address.
-      zh-cn: minio 访问页面。
-    Value:
-      Fn::Sub:
-        - http://${ServerAddress}:9001,http://${ServerAddress}:9000
-        - ServerAddress:
-            Fn::Select:
-              - 0
-              - Fn::GetAtt:
-                  - InstanceGroup
-                  - PublicIps
+Outputs:
   mlflow_address:
     Description:
       en: mlflow address.
